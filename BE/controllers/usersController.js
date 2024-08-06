@@ -35,7 +35,7 @@ class UserController {
             if (!checkPassword) throw { name: 'InvalidEmailPassword' }
 
             const access_token = signToken({ id: user.id })
-            
+
             res.status(200).json({ access_token })
         } catch (error) {
             res.json(error)

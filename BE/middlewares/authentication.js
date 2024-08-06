@@ -15,7 +15,7 @@ async function authentication (req, res, next) {
         if(!user) throw { name: 'Unauthorized' }
 
         req.user = {
-            id: user.id
+            UserId: user.id
         }
 
         next()

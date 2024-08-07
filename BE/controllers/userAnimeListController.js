@@ -2,7 +2,7 @@ const { UserAnimeList } = require("../models/index");
 const { instance } = require("../utils/axios");
 
 class userAnimeListController {
-    static async addMyAnime(req, res) {
+    static async addMyAnime(req, res, next) {
         try {
             const { UserId } = req.user;
             const { id } = req.params;
@@ -28,66 +28,55 @@ class userAnimeListController {
             })
             res.status(201).json(anime)
         } catch (error) {
-            console.log(error)
-            res.send(error)
+            next(error)
         }
     }
 
-    static async updateStatusMyAnime(req, res) {
+    static async updateStatusMyAnime(req, res, next) {
         try {
             const { id } = req.params;
             const { status } = req.body
 
-            let findUserAnimeList = await UserAnimeList.findOne({
-                where: {
-                    AnimeId: id
-                }
-            })
+            if (!status) throw { name: 'StatusEmpty' }
+
+            let findUserAnimeList = await UserAnimeList.findByPk(id)
+            if (!findUserAnimeList) throw { name: 'ListNotFound' }
 
             await findUserAnimeList.update({ status });
             res.status(200).json(findUserAnimeList);
         } catch (error) {
-            console.log(error);
-            res.send(error)
+            next(error)
         }
     }
 
-    static async updateNotesMyAnime(req, res) {
+    static async updateNotesMyAnime(req, res, next) {
         try {
             const { id } = req.params;
             const { notes } = req.body
 
             if (!notes) throw { name: 'NotesEmpty' }
 
-            let findUserAnimeList = await UserAnimeList.findOne({
-                where: {
-                    AnimeId: id
-                }
-            })
+            let findUserAnimeList = await UserAnimeList.findByPk(id)
+            if (!findUserAnimeList) throw { name: 'ListNotFound' }
 
             await findUserAnimeList.update({ notes });
             res.status(200).json(findUserAnimeList);
         } catch (error) {
-            console.log(error);
-            res.send(error)
+            next(error)
         }
     }
 
-    static async removeMyAnime(req, res) {
+    static async removeMyAnime(req, res, next) {
         try {
             const { id } = req.params;
 
-            let findUserAnimeList = await UserAnimeList.findOne({
-                where: {
-                    AnimeId: id
-                }
-            })
+            let findUserAnimeList = await UserAnimeList.findByPk(id)
+            if (!findUserAnimeList) throw { name: 'ListNotFound' }
 
             await findUserAnimeList.destroy();
-            res.status(200).json({ message: `Anime with title ${findUserAnimeList.title} has been removed`});
+            res.status(200).json({ message: `Anime with title ${findUserAnimeList.title} has been removed` });
         } catch (error) {
-            console.log(error)
-            res.send(error)
+            next(error)
         }
     }
 }

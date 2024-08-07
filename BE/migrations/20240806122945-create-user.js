@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      GoogleToken: {
+      GoogleId: {
         type: Sequelize.STRING 
       },
       gender: {

@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     animeUrl: DataTypes.STRING,
     notes: {
       type: DataTypes.STRING,
+      defaultValue: "-",
       allowNull: false,
       validate: {
         notNull: { message: "Notes cannot be left blank"},

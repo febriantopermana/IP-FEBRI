@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.hasMany(models.UserAnimeList, {foreignKey: 'UserId'})
+      User.hasMany(models.UserAnimeList, { foreignKey: 'UserId' })
     }
   }
   User.init({
@@ -20,14 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: {
         args: true,
-        message: 'UserName already taken'
+        msg: 'UserName already taken'
       },
       validate: {
-        notEmpty: { message: 'UserName is required' },
-        notNull: { message: 'UserName is required' },
+        notEmpty: { msg: 'UserName is required' },
+        notNull: { msg: 'UserName is required' },
         len: {
           args: [5, 12],
-          message: 'UserName must be between 5 and 12 characters long'
+          msg: 'UserName must be between 5 and 12 characters long'
         }
       }
     },
@@ -36,26 +36,27 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: {
         args: true,
-        message: 'Email already taken'
+        msg: 'Email already taken'
       },
       validate: {
-        notEmpty: { message: 'Email is required' },
-        notNull: { message: 'Email is required' }
+        isEmail: { msg: 'Must be in email format' },
+        notEmpty: { msg: 'Email is required' },
+        notNull: { msg: 'Email is required' }
       }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: { message: 'Password is required' },
-        notNull: { message: 'Password is required' },
+        notEmpty: { msg: 'Password is required' },
+        notNull: { msg: 'Password is required' },
         len: {
           args: [6, 24],
-          message: 'Password must be between 5 and 12 characters long'
+          msg: 'Password must be between 5 and 12 characters long'
         }
       }
     },
-    GoogleToken: DataTypes.STRING,
+    GoogleId: DataTypes.STRING,
     gender: DataTypes.STRING,
     dateOfBirth: DataTypes.DATE
   }, {

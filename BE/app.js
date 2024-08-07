@@ -6,6 +6,7 @@ const { registerUser, loginUser, getProfile } = require('./controllers/usersCont
 const { authentication } = require('./middlewares/authentication')
 const { addMyAnime, updateStatusMyAnime, updateNotesMyAnime, removeMyAnime } = require('./controllers/userAnimeListController')
 const errorHandlers = require('./middlewares/errorHandlers')
+const { userAuthorization } = require('./middlewares/authorization')
 const app = express()
 const port = 3000
 
@@ -22,9 +23,9 @@ app.post('/login', loginUser)
 app.use(authentication)
 app.get('/profile', getProfile)
 app.post('/animes/:id', addMyAnime)
-app.patch('/animes/:id', updateStatusMyAnime)
-app.put('/animes/:id', updateNotesMyAnime)
-app.delete('/animes/:id', removeMyAnime)
+app.patch('/profile/:id', userAuthorization, updateStatusMyAnime)
+app.put('/profile/:id', userAuthorization, updateNotesMyAnime)
+app.delete('/profile/:id', userAuthorization, removeMyAnime)
 app.use(errorHandlers)
 
 app.listen(port, () => {

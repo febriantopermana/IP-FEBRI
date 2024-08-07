@@ -21,7 +21,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'Watching'
       },
       title: {
         type: Sequelize.STRING

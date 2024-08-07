@@ -41,6 +41,22 @@ class UserController {
             res.json(error)
         }
     }
+
+    static async getProfile(req, res) {
+        try {
+            const { UserId } = req.user
+            const user = await User.findByPk(UserId, {
+                attributes: {
+                    exclude: ['password', 'GoogleToken']
+                },
+                include: 'UserAnimeLists'
+            });
+            res.status(200).json(user);
+        } catch (error) {
+            console.log(error)
+            res.send(error)
+        }
+    }
 }
 
 module.exports = UserController

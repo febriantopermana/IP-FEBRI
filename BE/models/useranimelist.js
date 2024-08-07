@@ -10,18 +10,28 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      UserAnimeList.belongsTo(models.User, {foreignKey: 'id'})
+      UserAnimeList.belongsTo(models.User, {foreignKey: 'UserId'})
     }
   }
   UserAnimeList.init({
     UserId: DataTypes.INTEGER,
     AnimeId: DataTypes.INTEGER,
-    status: DataTypes.STRING,
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: 'Watching'
+    },
     title: DataTypes.STRING,
     imageUrl: DataTypes.STRING,
     type: DataTypes.STRING,
     animeUrl: DataTypes.STRING,
-    notes: DataTypes.STRING
+    notes: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: { message: "Notes cannot be left blank"},
+        notEmpty: { message: "Notes cannot be left blank"}
+      }
+    }
   }, {
     sequelize,
     modelName: 'UserAnimeList',

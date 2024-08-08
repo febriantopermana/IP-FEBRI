@@ -3,7 +3,10 @@ const { instance } = require("../utils/axios");
 class AnimesController {
     static async getAllAnimes(req, res, next) {
         try {
-            const { q, page } = req.query
+            let { q, page } = req.query
+            if (!page) {
+                page = 1
+            }
             let { data } = await instance.get(`/anime?sfw&page=${page}&q=${q}`)    
             res.status(200).json(data)
         } catch (error) {

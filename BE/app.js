@@ -18,6 +18,9 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
+app.get('/ping', (req, res) => {
+    res.send('pong');
+});
 app.get('/animes', getAllAnimes)
 app.get('/animes/:id', getAnimeById)
 app.post('/register', registerUser)

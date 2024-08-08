@@ -10,9 +10,10 @@ class userAnimeListController {
 
             const findUserAnimeList = await UserAnimeList.findOne({
                 where: {
+                    UserId,
                     AnimeId: id
                 }
-            })
+            })      
 
             if (findUserAnimeList) {
                 throw { name: 'AnimeAddedAlready' }

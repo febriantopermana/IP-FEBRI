@@ -1,5 +1,7 @@
-const { User } = require("../models/index");
+const { User, UserAnimeList } = require("../models/index");
+const { instance } = require("../utils/axios");
 const { comparePassword } = require("../utils/bcrypt");
+const gemini = require("../utils/gemini");
 const { signToken } = require("../utils/jwt");
 const { OAuth2Client } = require('google-auth-library');
 
@@ -53,19 +55,17 @@ class UserController {
 
             const ticket = await client.verifyIdToken({
                 idToken: googleToken,
-                audience: client_id,  // Specify the CLIENT_ID of the app that accesses the backend
-                // Or, if multiple clients access the backend:
-                //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+                audience: client_id
             });
             const payload = ticket.getPayload();
             // const userid = payload['sub'];
             // If the request specified a Google Workspace domain:
             // const domain = payload['hd'];
 
-            const [ user ] = await User.findOrCreate({
+            const [user] = await User.findOrCreate({
                 where: { email: payload.email },
-                default: {
-                    userName: payload["given_name"] + Date.now().toString().slice(0, 4),
+                defaults: {
+                    userName: payload["given_name"].slice(0, 4) + Date.now().toString().slice(0, 4),
                     email: payload.email,
                     password: "temp-" + Date.now().toString().slice(4, 8)
                 }
@@ -90,6 +90,30 @@ class UserController {
             });
             res.status(200).json(user);
         } catch (error) {
+            next(error)
+        }
+    }
+
+    static async getRecommended(req, res, next) {
+        try {
+            const { UserId } = req.user
+            let animeList = await UserAnimeList.findAll({
+                where: {
+                    UserId: UserId
+                }
+            })
+            let getTitle = animeList.map((e) => e.title).join(', ')
+
+            if (!getTitle) { res.status(200).json([]) }
+            let data = await gemini(getTitle)
+            console.log(data)
+            const result = await Promise.all(data.map(async (e) => {
+                const { data } = await instance.get(`/anime?sfw&page&q=${e}`)
+                return data.data[0]
+            }))
+            res.status(200).json(result)
+        } catch (error) {
+            console.log(error)
             next(error)
         }
     }

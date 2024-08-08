@@ -2,12 +2,16 @@ import { useEffect, useState } from "react"
 import instance from "../utils/axios"
 import NavBar from '../components/Nav.jsx';
 import Page from "../components/Pagination.jsx";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function HomePage() {
     const [animes, setAnimes] = useState([])
+
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(1)
     const [totalPage, setTotalPage] = useState(null)
+
+    const nav = useNavigate()
 
     const fetchAnimes = async () => {
         try {
@@ -16,6 +20,22 @@ export default function HomePage() {
             const getAnimes = data.data
             setAnimes(getAnimes)
             setTotalPage(pagination["last_visible_page"])
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const addAnimeList = async (e) => {
+        e.preventDefault()
+        try {
+            console.log(animes)
+            const result = await instance.post('/animes/' + e.target.value, {}, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem('access_token')
+                }
+            })
+            console.log(result)
+            nav('/profile')
         } catch (error) {
             console.log(error)
         }
@@ -51,18 +71,13 @@ export default function HomePage() {
                                 Genres: {e.genres.map(eg => eg.name).join(', ')}
                             </p>
                         </div>
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item">Genres: {e.genres.map(eg => eg.name).join(', ')}</li>
-                            <li className="list-group-item">Aired: {e.aired.string}</li>
-                            <li className="list-group-item">Rating: {e.rating}</li>
-                        </ul>
                         <div className="card-body">
-                            <a href="#" className="card-link">
-                                Card link
-                            </a>
-                            <a href="#" className="card-link">
-                                Another link
-                            </a>
+                            <button value={e['mal_id']} onClick={addAnimeList} className="btn btn-primary">
+                                Add to List
+                            </button>
+                            <Link to={`/${e['mal_id']}`} className="btn btn-primary mx-2">
+                                See Detail
+                            </Link>
                         </div>
                     </div>
                 )}

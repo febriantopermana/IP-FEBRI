@@ -1,12 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function NavBar({ search, setSearch, fetchAnimes }) {
+    const nav = useNavigate()
+    const handleLogout = () => {
+        localStorage.clear()
+        nav('/login')
+    }
+
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">
-                    Navbar
-                </a>
+                <Link className="navbar-brand" to="/">
+                    IP-FEBRI
+                </Link>
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -21,21 +27,29 @@ export default function NavBar({ search, setSearch, fetchAnimes }) {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link className="nav-link active" aria-current="page" href="#">
+                            <Link className="nav-link active" aria-current="page" to="/">
                                 Home
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">
+                            <Link className="nav-link" to="/recommend">
+                                Recommendation
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/profile">
                                 Profile
-                            </a>
+                            </Link>
                         </li>
                     </ul>
-                    <form className="d-flex me-5" role="search" type="submit" onSubmit={() => fetchAnimes()}>
+                    <form className="d-flex me-5" role="search" type="submit" onSubmit={(e) => {
+                        e.preventDefault()
+                        fetchAnimes()
+                    }}>
                         <input
                             className="form-control me-2"
                             type="search"
-                            placeholder="Search"
+                            placeholder="Search by title"
                             aria-label="Search"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
@@ -46,13 +60,13 @@ export default function NavBar({ search, setSearch, fetchAnimes }) {
                     </form>
                     {!localStorage.access_token &&
                         <Link to="/login">
-                            <button className="btn" type="submit" >
+                            <button className="btn" >
                                 Login
                             </button>
                         </Link>
                     }
                     {localStorage.access_token &&
-                        <button className="btn" type="submit" onClick={() => localStorage.clear()}>
+                        <button className="btn" onClick={handleLogout}>
                             Logout
                         </button>
                     }

@@ -16,6 +16,7 @@ class AnimesController {
 
             res.status(200).json(data);
         } catch (error) {
+            console.log(error.response.data)
             if (error.isAxiosError) {
                 console.error('Axios error:', {
                     message: error.message,
@@ -25,7 +26,7 @@ class AnimesController {
                         data: error.response.data
                     } : null
                 });
-                res.status(error.response ? error.response.status : 500).json({
+                return res.status(error.response ? error.response.status : 500).json({
                     error: error.response ? error.response.data : 'Internal Server Error'
                 });
             } else {
@@ -33,7 +34,7 @@ class AnimesController {
                     message: error.message,
                     stack: error.stack
                 });
-                res.status(500).json({ error: 'Internal Server Error' });
+                return res.status(500).json({ error: 'Internal Server Error' });
             }
             next(error);
         }
